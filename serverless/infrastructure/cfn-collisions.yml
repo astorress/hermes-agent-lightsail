@@ -1,0 +1,4 @@
+Outputs:
+  ServerlessDeploymentBucketName:
+    Export:
+      Name: ${self:custom.servicePrefix}-ServerlessDeploymentBucketName

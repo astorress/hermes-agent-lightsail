@@ -1,0 +1,24 @@
+services:
+  hermes_agent:
+    container_name: 'HermesAgent'
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: img-hermes
+    volumes:
+      - ..:/app
+      - hermes-agent-bashhistory:/commandhistory
+      - ~/.ssh-hermes:/home/hermes/.ssh
+    env_file:
+      - ../.envs/aws.env
+      - ../.envs/sls.env
+      - ../.envs/config.env
+    working_dir: /app
+    restart: unless-stopped
+    command:
+      - /bin/sh
+      - -c
+      - sleep infinity
+
+volumes:
+  hermes-agent-bashhistory:

@@ -1,0 +1,16 @@
+# Dependencies
+node_modules
+
+# Environment
+.envs/*
+!.envs/.gitignore
+
+*.serverless
+*.vscode
+*.DS_Store
+.ssh
+tmp
+*.bkp
+*.pem
+*.key
+id_rsa*

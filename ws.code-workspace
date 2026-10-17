@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "path": "/app",
+      "name": "[✪] Project",
+    },
+    {
+      "path": "/app/.envs",
+      "name": "[⛭] Envs",
+    },
+  ],
+  "settings": {},
+}

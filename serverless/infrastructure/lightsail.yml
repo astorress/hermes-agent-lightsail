@@ -1,0 +1,33 @@
+Resources:
+  Instance:
+    Type: AWS::Lightsail::Instance
+    Properties:
+      InstanceName: ${self:custom.lightsail.instanceName}
+      AvailabilityZone: ${self:provider.region}${self:custom.lightsail.zoneSuffix}
+      BlueprintId: ${self:custom.lightsail.blueprintId}
+      BundleId: ${self:custom.lightsail.bundleId}
+      UserData: ${self:custom.lightsail.userData}
+      Networking:
+        Ports:
+          - Protocol: tcp
+            FromPort: 22
+            ToPort: 22
+            Cidrs: ${self:custom.lightsail.sshCidrs}
+      AddOns:
+        - AddOnType: AutoSnapshot
+          Status: Enabled
+          AutoSnapshotAddOnRequest:
+            SnapshotTimeOfDay: ${self:custom.lightsail.snapshotTimeUtc}
+      Tags:
+        - Key: app
+          Value: ${self:custom.app}
+        - Key: service
+          Value: ${self:service}
+        - Key: stage
+          Value: ${self:custom.stage}
+
+  StaticIp:
+    Type: AWS::Lightsail::StaticIp
+    Properties:
+      StaticIpName: ${self:custom.lightsail.staticIpName}
+      AttachedTo: !Ref Instance

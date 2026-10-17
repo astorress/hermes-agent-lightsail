@@ -1,0 +1,39 @@
+{
+  "name": "hermes-agent",
+  "devDependencies": {
+    "@cspell/dict-es-es": "^3.0.8",
+    "@serverless/safeguards-plugin": "^1.2.1",
+    "cspell": "^10.3.5",
+    "prettier": "^3.9.9",
+    "serverless-deployment-bucket": "^1.6.0",
+    "serverless-scriptable-plugin": "^1.3.1"
+  },
+  "scripts": {
+    "deploy-infra:dev": "cd serverless/infrastructure && sls deploy --stage dev",
+    "deploy-infra:test": "cd serverless/infrastructure && sls deploy --stage test",
+    "deploy-infra:prod": "cd serverless/infrastructure && sls deploy --stage prod",
+    "deploy-app:dev": "bash scripts/lightsail.sh deploy",
+    "deploy-app:test": "bash scripts/lightsail.sh deploy",
+    "deploy-app:prod": "bash scripts/lightsail.sh deploy",
+    "remove-infra:dev": "cd serverless/infrastructure && sls remove --stage dev",
+    "remove-infra:test": "cd serverless/infrastructure && sls remove --stage test",
+    "remove-infra:prod": "cd serverless/infrastructure && sls remove --stage prod",
+    "rollback": "bash scripts/lightsail.sh rollback",
+    "releases": "bash scripts/lightsail.sh releases",
+    "status": "bash scripts/lightsail.sh status",
+    "logs": "bash scripts/lightsail.sh logs",
+    "chat": "bash scripts/lightsail.sh chat",
+    "model": "bash scripts/lightsail.sh model",
+    "ssh": "bash scripts/lightsail.sh ssh",
+    "tunnel": "bash scripts/lightsail.sh tunnel",
+    "token": "bash scripts/lightsail.sh token",
+    "ip-lightsail": "bash scripts/lightsail.sh ip",
+    "key": "bash scripts/lightsail.sh key",
+    "myip": "bash scripts/lightsail.sh myip",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "spell": "cspell --no-progress"
+  },
+  "author": "Sebastian Torres",
+  "license": "ISC"
+}

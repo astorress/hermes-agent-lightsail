@@ -1,0 +1,39 @@
+Resources:
+  # Lightsail instances cannot have an IAM role: the agent gets a user limited to one model.
+  BedrockUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: ${self:custom.servicePrefix}-bedrock
+      Policies:
+        - PolicyName: ${self:custom.servicePrefix}-bedrock-invoke
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                  - bedrock:InvokeModelWithResponseStream
+                Resource:
+                  - !Sub arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/${self:custom.bedrock.modelId}
+                  - !Sub
+                    - arn:aws:bedrock:*::foundation-model/${Vendor}.${Model}
+                    - Vendor:
+                        !Select [
+                          1,
+                          !Split ['.', '${self:custom.bedrock.modelId}'],
+                        ]
+                      Model:
+                        !Select [
+                          2,
+                          !Split ['.', '${self:custom.bedrock.modelId}'],
+                        ]
+              - Effect: Allow
+                Action:
+                  - bedrock:ListFoundationModels
+                  - bedrock:ListInferenceProfiles
+                Resource: '*'
+
+  BedrockAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref BedrockUser

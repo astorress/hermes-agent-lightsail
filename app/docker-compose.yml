@@ -1,0 +1,36 @@
+# Runs on the Lightsail instance from the release folder, with the .env rendered by deploy.
+# - No published ports: the gateway only makes outbound connections and the dashboard stays on
+#   127.0.0.1 (`npm run tunnel`). Never pass `--insecure --host 0.0.0.0` to the dashboard.
+# - Keep the image's default ENTRYPOINT.
+# - ./skills is mounted read-only at /opt/skills; `lightsail.sh deploy` registers it in
+#   `skills.external_dirs` (see skills/README.md).
+name: hermes
+
+services:
+  gateway:
+    build:
+      context: .
+      args:
+        HERMES_IMAGE_TAG: ${HERMES_IMAGE_TAG:-stable}
+        EXTRA_APT_PACKAGES: ${EXTRA_APT_PACKAGES:-git jq curl unzip}
+    image: hermes-agent:${HERMES_IMAGE_TAG:-stable}
+    container_name: hermes
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env
+    volumes:
+      - ${HERMES_DATA_DIR:-/opt/hermes/data}:/opt/data
+      - ./skills:/opt/skills:ro
+    command: ['gateway', 'run']
+
+  dashboard:
+    image: hermes-agent:${HERMES_IMAGE_TAG:-stable}
+    container_name: hermes-dashboard
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      - gateway
+    volumes:
+      - ${HERMES_DATA_DIR:-/opt/hermes/data}:/opt/data
+      - ./skills:/opt/skills:ro
+    command: ['dashboard', '--host', '127.0.0.1', '--no-open']

@@ -1,0 +1,16 @@
+Resources:
+  LightsailInstanceName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /${self:custom.servicePrefix}/LightsailInstanceName
+      Tier: Standard
+      Type: String
+      Value: !Ref Instance
+
+  LightsailPublicIp:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /${self:custom.servicePrefix}/LightsailPublicIp
+      Tier: Standard
+      Type: String
+      Value: !GetAtt StaticIp.IpAddress

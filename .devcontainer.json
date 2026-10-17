@@ -1,0 +1,53 @@
+{
+  "name": "hermes-agent",
+  "dockerComposeFile": [".docker/docker-compose.yml"],
+  "service": "hermes_agent",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "aaron-bond.better-comments",
+        "davidanson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "irongeek.vscode-env",
+        "micnil.vscode-checkpoints",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.live-server",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-spanish",
+        "threadheap.serverless-ide-vscode",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "cSpell.files": ["**/*.md", "**/*.yml"],
+        "editor.codeActionsOnSave": {
+          "source.fixAll.markdownlint": "explicit"
+        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.insertSpaces": true,
+        "git.autoRepositoryDetection": true,
+        "git.openRepositoryInParentFolders": "always",
+        "json.format.enable": true,
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[markdown]": {
+          "editor.formatOnSave": true,
+          "editor.formatOnPaste": true
+        },
+        "serverlessIDE.cfnLint.path": "/usr/local/bin/cfn-lint",
+        "serverlessIDE.cfnLint.appendRules": ["cfn_lint_serverless.rules"],
+        "serverlessIDE.completion": true,
+        "serverlessIDE.hover": true,
+        "serverlessIDE.telemetry.enableTelemetry": false,
+        "serverlessIDE.validate": true,
+        "serverlessIDE.validationProvider": "cfn-lint"
+      }
+    }
+  },
+  "initializeCommand": "chmod +x .docker/initialize.sh && .docker/initialize.sh",
+  "postCreateCommand": "chmod +x .docker/entrypoint.sh && .docker/entrypoint.sh"
+}

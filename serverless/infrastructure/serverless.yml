@@ -1,0 +1,70 @@
+service: infrastructure
+frameworkVersion: ^4.43.0
+configValidationMode: error
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  stackName: ${self:custom.app}-${self:service}
+  deploymentBucket:
+    name: ${self:custom.s3.deploymentBucketName.${self:custom.stage}}
+
+resources:
+  - ${file(lightsail.yml)}
+  - ${file(ssm.yml)}
+  - ${file(iam.yml)}
+  - ${file(secrets-manager.yml)}
+  - ${file(cfn-collisions.yml)}
+
+plugins:
+  - serverless-deployment-bucket
+  - '@serverless/safeguards-plugin'
+  - serverless-scriptable-plugin
+
+custom:
+  org: ${env:SERVERLESS_ORG}
+  app: hermes-agents
+  stage: ${opt:stage, self:provider.stage}
+  safeguards:
+    - safeguard: framework-version
+      enforcementLevel: warning
+      config: ${self:frameworkVersion}
+    - safeguard: allowed-regions
+      enforcementLevel: error
+      config:
+        - ${self:provider.region}
+    - safeguard: allowed-stages
+      enforcementLevel: error
+      config:
+        - dev
+        - test
+        - prod
+  # One AWS account per stage: names carry no stage.
+  servicePrefix: ${self:custom.app}
+  developer: ${env:DEVELOPER}
+  s3:
+    deploymentBucketName:
+      dev: ${self:provider.region}.${self:custom.org}.${self:custom.app}.${self:custom.stage}.${self:custom.developer}.deploys
+      test: ${self:provider.region}.${self:custom.org}.${self:custom.app}.${self:custom.stage}.deploys
+      prod: ${self:provider.region}.${self:custom.org}.${self:custom.app}.${self:custom.stage}.deploys
+  bundleIds:
+    dev: small_3_0
+    test: small_3_0
+    prod: medium_3_0
+  bedrock:
+    modelId: ${env:BEDROCK_MODEL_ID, 'us.anthropic.claude-haiku-5-5'}
+  lightsail:
+    instanceName: ${self:custom.servicePrefix}
+    staticIpName: ${self:custom.servicePrefix}-ip
+    blueprintId: ubuntu_24_04
+    bundleId: ${self:custom.bundleIds.${self:custom.stage}}
+    zoneSuffix: a
+    snapshotTimeUtc: ${env:SNAPSHOT_TIME_UTC, '06:00'}
+    # Only SSH is exposed.
+    sshCidrs: ${file(./allowed-cidrs.js)}
+    userData: ${file(./user-data.sh)}
+  scriptable:
+    hooks:
+      deploy:finalize:
+        - REGION=${self:provider.region} ./downloadSshKeyPair.sh
